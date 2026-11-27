@@ -46,6 +46,27 @@ from .bin_layouts import pack as _pack_layout
 
 _LOGGER = logging.getLogger(__name__)
 
+# Measured colours of the 31.5" Spectra 6 panel (reference only; the
+# dithering palette below is still the theoretical one).
+#
+# Measured 2026-11-26 with a Variable Spectro 1 (SCI, D65, 10 deg observer).
+# Each ink was a full-panel solid fill sent as a raw .bin, so there was no
+# dithering or other processing. Two readings per ink, averaged.
+#
+#   ink     nibble   L*     a*      b*     approx sRGB
+#   black   0x0      27.8    2.61   -7.49  #40414D
+#   white   0x1      68.1   -4.24   -3.92  #9AA9AD
+#   yellow  0x2      68.6   -6.54   53.84  #B9A841
+#   red     0x3      34.9   27.82   11.26  #7F3F41
+#   blue    0x5      40.7   -0.01  -33.61  #2D6397
+#   green   0x6      39.7  -12.18    2.22  #486359
+#
+# Takeaways: the usable lightness range is only about L* 28-68, yellow is
+# as light as white, and red and green are dark and muted (green has the
+# lowest chroma, C* about 12). Panel white is slightly cool, so it is the
+# natural reference white. Nibble 0x4 is unused and renders as white.
+# The 13.3" panel has not been measured.
+
 # Palette order must match the code table below 1:1.
 _PALETTE_RGB = [
     (0, 0, 0),        # 0x0 black
