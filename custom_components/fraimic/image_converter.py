@@ -43,6 +43,7 @@ import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 from .bin_layouts import pack as _pack_layout
+from .bin_layouts import unpack as _unpack_layout
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -322,3 +323,15 @@ def convert_image(
     preview_png = _indices_to_preview_png(indices, width, height)
 
     return bin_data, preview_png
+
+
+def bin_to_preview_png(bin_data: bytes, *, width: int, height: int, byte_layout: str) -> bytes:
+    """Decode a raw frame buffer back into a preview PNG at the panel's
+    native dimensions -- the same picture convert_image's preview shows,
+    for a `.bin` that was produced elsewhere. Raises ValueError if
+    `bin_data` is not exactly the size `byte_layout` needs.
+
+    Runs synchronously/CPU-bound -- call via hass.async_add_executor_job.
+    """
+    indices = _unpack_layout(bin_data, byte_layout, width, height)
+    return _indices_to_preview_png(indices.tobytes(), width, height)
